@@ -1,0 +1,92 @@
+CREATE DATABASE IF NOT EXISTS StudentDB;
+USE StudentDB;
+DROP TABLE IF EXISTS Enrollment;
+DROP TABLE IF EXISTS Students;
+DROP TABLE IF EXISTS Courses;
+CREATE TABLE Students (
+ student_id INT PRIMARY KEY,
+ name VARCHAR(50) NOT NULL,
+ age INT,
+ department VARCHAR(50)
+);
+CREATE TABLE Courses (
+ course_id INT PRIMARY KEY,
+ course_name VARCHAR(50) NOT NULL,
+ credits INT
+);
+CREATE TABLE Enrollment (
+ student_id INT,
+ course_id INT,
+ grade CHAR(1),
+ PRIMARY KEY (student_id, course_id),
+ FOREIGN KEY (student_id) REFERENCES Students(student_id)
+ ON DELETE CASCADE
+ ON UPDATE CASCADE,
+ FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+ ON DELETE CASCADE
+ ON UPDATE CASCADE
+);
+INSERT INTO Students VALUES
+(1,'Alice',20,'CS'),
+(2,'Bob',21,'EE'),
+(3,'Charlie',22,'ME'),
+(4,'David',23,'CS');
+INSERT INTO Courses VALUES
+(101,'DBMS',4),
+(102,'OS',3),
+(103,'Networks',3),
+(104,'AI',4);
+INSERT INTO Enrollment VALUES
+(1,101,'A'),
+(1,102,'B'),
+(2,101,'B'),
+(3,103,'A'),
+(4,101,'B'),
+(4,104,'A');
+SELECT * FROM Students WHERE age > 21;
+SELECT * FROM Students WHERE department = 'CS';
+SELECT * FROM Students ORDER BY name ASC;
+SELECT * FROM Courses ORDER BY credits DESC;
+SELECT c.course_name, COUNT(e.student_id) AS student_count
+FROM Courses c
+JOIN Enrollment e ON c.course_id = e.course_id
+GROUP BY c.course_name;
+SELECT department, AVG(age) AS avg_age
+FROM Students
+GROUP BY department;
+SELECT name
+FROM Students
+WHERE student_id IN (
+ SELECT student_id
+ FROM Enrollment
+ WHERE course_id IN (
+ SELECT course_id
+ FROM Courses
+ WHERE credits > 3
+ )
+);
+SELECT course_name
+FROM Courses
+WHERE course_id IN (
+ SELECT course_id
+ FROM Enrollment
+ GROUP BY course_id
+ HAVING COUNT(student_id) > 1
+);
+CREATE INDEX idx_student_age ON Students(age);
+CREATE INDEX idx_course_credits ON Courses(credits);
+CREATE INDEX idx_enrollment ON Enrollment(student_id, course_id);
+EXPLAIN SELECT * FROM Students WHERE age > 21;
+EXPLAIN SELECT * FROM Courses WHERE credits > 3;
+SELECT * FROM Students;
+SELECT * FROM Courses;
+SELECT * FROM Enrollment;
+SELECT 
+ s.student_id,
+ s.name,
+ s.department,
+ c.course_name,
+ e.grade
+FROM Students s
+JOIN Enrollment e ON s.student_id = e.student_id
+JOIN Courses c ON e.course_id = c.course_id;
