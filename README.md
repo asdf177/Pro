@@ -1,1 +1,59 @@
-# Pro
+CREATE DATABASE IF NOT EXISTS StudentManagement;
+USE StudentManagement;
+CREATE TABLE IF NOT EXISTS Instructor (
+ InstructorID INT PRIMARY KEY,
+ Name VARCHAR(100) NOT NULL,
+ Email VARCHAR(100) UNIQUE NOT NULL,
+ Department VARCHAR(100) NOT NULL
+);
+INSERT IGNORE INTO Instructor VALUES
+(1, 'Dr. Sharma', 'sharma@gmail.com', 'Computer Science'),
+(2, 'Dr. Patil', 'patil@gmail.com', 'Information Technology'),
+(3, 'Dr. Mehta', 'mehta@gmail.com', 'Electronics');
+SELECT * FROM Instructor;
+CREATE TABLE IF NOT EXISTS Student (
+ StudentID INT PRIMARY KEY,
+ Name VARCHAR(100) NOT NULL,
+ Email VARCHAR(100) UNIQUE NOT NULL,
+ Age INT CHECK (Age >= 16),
+ Address TEXT
+);
+INSERT IGNORE INTO Student VALUES
+(101, 'Amit', 'amit@gmail.com', 20, 'Pune'),
+(102, 'Sneha', 'sneha@gmail.com', 21, 'Mumbai'),
+(103, 'Rahul', 'rahul@gmail.com', 19, 'Nashik'),
+(104, 'Priya', 'priya@gmail.com', 22, 'Pune');
+SELECT * FROM Student;
+CREATE TABLE IF NOT EXISTS Course (
+ CourseID INT PRIMARY KEY,
+ CourseName VARCHAR(100) NOT NULL,
+ Credits INT CHECK (Credits > 0),
+ InstructorID INT,
+ FOREIGN KEY (InstructorID) REFERENCES Instructor(InstructorID)
+);
+INSERT IGNORE INTO Course VALUES
+(201, 'DBMS', 4, 1),
+(202, 'Operating Systems', 3, 2),
+(203, 'Data Structures', 4, 1),
+(204, 'Digital Electronics', 3, 3);
+SELECT * FROM Course;
+CREATE TABLE IF NOT EXISTS Enrollment (
+ EnrollmentID INT PRIMARY KEY,
+ StudentID INT,
+ CourseID INT,
+ EnrollmentDate DATE NOT NULL,
+ FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+ FOREIGN KEY (CourseID) REFERENCES Course(CourseID)
+ );
+INSERT IGNORE INTO Enrollment VALUES
+(1, 101, 201, '2026-04-01'),
+(2, 101, 202, '2026-04-02'),
+(3, 102, 201, '2026-04-01'),
+(4, 103, 203, '2026-04-03'),
+(5, 104, 204, '2026-04-04'),
+(6, 102, 203, '2026-04-05');
+SELECT * FROM Enrollment;
+UPDATE Student
+SET Email = 'amit55@gmail.com'
+WHERE StudentID = 101;
+SELECT * FROM Student;
