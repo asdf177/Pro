@@ -1,0 +1,62 @@
+CREATE DATABASE IF NOT EXISTS StudentDB;
+USE StudentDB;
+DROP TABLE IF EXISTS Enrollment;
+DROP TABLE IF EXISTS Students;
+DROP TABLE IF EXISTS Courses;
+CREATE TABLE Students (
+ student_id INT PRIMARY KEY,
+ name VARCHAR(50),
+ age INT,
+ department VARCHAR(50)
+);
+CREATE TABLE Courses (
+ course_id INT PRIMARY KEY,
+ course_name VARCHAR(50),
+ credits INT
+);
+CREATE TABLE Enrollment (
+ enrollment_id INT PRIMARY KEY,
+ student_id INT,
+ course_id INT,
+ grade CHAR(2),
+ FOREIGN KEY (student_id) REFERENCES Students(student_id),
+ FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+INSERT INTO Students VALUES
+(1,'Alice',20,'CS'),
+(2,'Bob',21,'EE'),
+(3,'Charlie',22,'ME');
+INSERT INTO Courses VALUES
+(101,'DBMS',4),
+(102,'OS',3),
+(103,'Networks',3);
+INSERT INTO Enrollment VALUES
+(1,1,101,'A'),
+(2,1,102,'B'),
+(3,2,101,'B'),
+(4,3,103,'A');
+CREATE OR REPLACE VIEW StudentCourseView AS
+SELECT s.student_id, s.name, s.department, c.course_name, e.grade
+FROM Students s
+JOIN Enrollment e ON s.student_id = e.student_id
+JOIN Courses c ON e.course_id = c.course_id;
+SELECT * FROM StudentCourseView;
+UPDATE Enrollment e
+JOIN Students s ON s.student_id = e.student_id
+JOIN Courses c ON e.course_id = c.course_id
+SET e.grade='A+
+WHERE s.name='Alice' AND c.course_name='DBMS';
+SELECT * FROM StudentCourseView;
+DELETE e FROM Enrollment e
+JOIN Students s ON s.student_id = e.student_id
+JOIN Courses c ON e.course_id = c.course_id
+WHERE s.name='Charlie' AND c.course_name='Networks';
+SELECT * FROM StudentCourseView;
+CREATE INDEX idx_student_name ON Students(name);
+CREATE INDEX idx_course_name ON Courses(course_name);
+CREATE INDEX idx_enroll_student_course ON Enrollment(student_id, course_id);
+EXPLAIN SELECT * FROM Students WHERE name='Alice';
+EXPLAIN SELECT * FROM Courses WHERE course_name='DBMS';
+EXPLAIN SELECT * FROM Enrollment WHERE student_id=1 AND course_id=101;
+SELECT * FROM StudentCourseView;
+SELECT student_id, course_id, grade FROM Enrollment;
