@@ -1,0 +1,29 @@
+CREATE DATABASE IF NOT EXISTS SalesDB;
+USE SalesDB;
+SET SQL_SAFE_UPDATES = 0;
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(50),
+ age INT,
+ department VARCHAR(50),
+ salary INT,
+ total_sales INT
+);
+INSERT INTO users (name, age, department, salary, total_sales) VALUES
+('Rahul', 25, 'IT', 50000, 100000),
+('Sneha', 30, 'HR', 40000, 50000),
+('Amit', 28, 'IT', 60000, 150000);
+SELECT * FROM users;
+UPDATE users SET salary = 55000 WHERE name = 'Rahul';
+DELETE FROM users WHERE name = 'Sneha';
+SELECT * FROM users;
+SELECT SUM(total_sales) AS TotalSales FROM users;
+SELECT AVG(age) AS AverageAge FROM users;
+SELECT department, SUM(total_sales) AS DepartmentSales
+FROM users
+GROUP BY department;
+CREATE INDEX idx_department ON users(department);
+CREATE INDEX idx_age ON users(age);
+SHOW INDEX FROM users;
+EXPLAIN SELECT * FROM users WHERE department='IT';
