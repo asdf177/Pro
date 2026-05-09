@@ -1,0 +1,49 @@
+CREATE DATABASE IF NOT EXISTS StudentDB;
+USE StudentDB;
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Customers;
+SET FOREIGN_KEY_CHECKS = 1;
+CREATE TABLE Customers (
+ CustomerID INT PRIMARY KEY,
+ CustomerName VARCHAR(50),
+ ContactNumber VARCHAR(15)
+);
+CREATE TABLE Orders (
+ OrderID INT PRIMARY KEY,
+ CustomerID INT,
+ OrderDate DATE,
+ Amount DECIMAL(10,2),
+ FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+INSERT INTO Customers (CustomerID, CustomerName, ContactNumber) VALUES
+(1, 'Alice', '1234567890'),
+(2, 'Bob', '2345678901'),
+(3, 'Charlie', '3456789012'),
+(4, 'David', '4567890123');
+INSERT INTO Orders (OrderID, CustomerID, OrderDate, Amount) VALUES
+(101, 1, '2026-03-15', 250.00),
+(102, 2, '2026-03-16', 450.00),
+(103, 2, '2026-03-17', 150.00),
+(104, 3, '2026-03-18', 300.00);
+SELECT c.CustomerID, c.CustomerName, o.OrderID, o.Amount
+FROM Customers c
+INNER JOIN Orders o
+ON c.CustomerID = o.CustomerID;
+SELECT c.CustomerID, c.CustomerName, o.OrderID, o.Amount
+FROM Customers c
+LEFT JOIN Orders o
+ON c.CustomerID = o.CustomerID;
+SELECT c.CustomerID, c.CustomerName, o.OrderID, o.Amount
+FROM Customers c
+RIGHT JOIN Orders o
+ON c.CustomerID = o.CustomerID;
+SELECT c.CustomerID, c.CustomerName, o.OrderID, o.Amount
+FROM Customers c
+LEFT JOIN Orders o
+ON c.CustomerID = o.CustomerID
+UNION
+SELECT c.CustomerID, c.CustomerName, o.OrderID, o.Amount
+FROM Customers c
+RIGHT JOIN Orders o
+ON c.CustomerID = o.CustomerID;
